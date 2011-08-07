@@ -1,0 +1,12 @@
+name: RapidBuilder
+main: me.cmesh.RapidBuilder.RapidBuilder
+version: 2.0
+commands:
+   rf:
+      description: This will fill in the specified area
+      usage: |
+          /rf
+   rfill:
+      description: This will fill in the specified area
+      usage: |
+          /rfill
