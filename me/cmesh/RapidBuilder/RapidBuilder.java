@@ -5,10 +5,9 @@ import java.util.UUID;
 import java.util.logging.Logger;
 
 import org.bukkit.entity.Player;
-import org.bukkit.event.Event; 
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.plugin.PluginManager;
+import org.bukkit.block.Block;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.Location;
@@ -24,13 +23,7 @@ public class RapidBuilder extends JavaPlugin
 	
 	public void onEnable()
 	{
-		PluginManager pm = getServer().getPluginManager();
-		pm.registerEvent(Event.Type.PLAYER_INTERACT, playerListener, Event.Priority.Normal, this);
-		log.info("RapidBuilder Enabled");
-	}
-	public void onDisable()
-	{
-		log.info("RapidBuilder Disabled");
+		getServer().getPluginManager().registerEvents(playerListener, this);
 	}
 	
 	
@@ -91,15 +84,7 @@ public class RapidBuilder extends JavaPlugin
     						{
     							if(player.isOp())
     							{
-    								try
-    								{
-    								player.getWorld().getBlockAt(new Location(player.getWorld(), x,y,z)).setType(type);
-    								}
-    								catch (java.lang.ArrayIndexOutOfBoundsException e)
-    								{
-    									player.sendMessage("Invalid Block Type");
-    									return true;
-    								}
+    								breakBlock(player, new Location(player.getWorld(), x,y,z), type);
     							}
     							else
     							{
@@ -179,6 +164,25 @@ public class RapidBuilder extends JavaPlugin
     	}
 		return false;   	
     }
+	
+	private void breakBlock(Player player, Location loc, Material type)
+	{
+		try
+		{
+			Block block = player.getWorld().getBlockAt(loc);
+			if(type == Material.AIR && block.getType() != Material.AIR)
+			{
+				player.getWorld().dropItemNaturally(loc,new ItemStack(block.getType(),1));
+			}
+			block.setType(type);
+		}
+		catch (java.lang.ArrayIndexOutOfBoundsException e)
+		{
+			player.sendMessage("Invalid Block Type");
+		}
+	}
+	
+	
 	private void clearInHand(Player player)
 	{
 		ItemStack [] inventoryArray = player.getInventory().getContents();
